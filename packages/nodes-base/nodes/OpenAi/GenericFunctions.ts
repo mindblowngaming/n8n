@@ -50,8 +50,9 @@ export async function setOpenAiAuthorizationHeader(
 		const oauthTokenData = isDataObject(credentials.oauthTokenData)
 			? credentials.oauthTokenData
 			: undefined;
-		// n8n stores OAuth token data on `oauthTokenData` and supports both camelCase
-		// and snake_case token field names used across credential migrations.
+		// n8n generally normalizes OAuth2 tokens to oauthTokenData.accessToken.
+		// We also support oauthTokenData.access_token (snake_case) and
+		// credentials.accessToken for migrated or provider-specific credential shapes.
 		accessToken =
 			getStringValue(oauthTokenData?.accessToken) ??
 			getStringValue(oauthTokenData?.access_token) ??

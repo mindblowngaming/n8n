@@ -5,11 +5,11 @@ import { getOpenAiCredentialType, setOpenAiAuthorizationHeader } from '../Generi
 
 describe('OpenAI GenericFunctions', () => {
 	const createMockContext = (
-		authentication: 'apiKey' | 'oAuth2',
+		authType: 'apiKey' | 'oAuth2',
 		credentials: Record<string, unknown>,
 	) => {
 		return {
-			getNodeParameter: jest.fn().mockReturnValue(authentication),
+			getNodeParameter: jest.fn().mockReturnValue(authType),
 			getCredentials: jest.fn().mockResolvedValue(credentials),
 			getNode: jest.fn().mockReturnValue({ name: 'OpenAI', type: 'n8n-nodes-base.openAi' }),
 		};
