@@ -21,13 +21,17 @@ function getStringValue(value: unknown): string | undefined {
 
 export function getOpenAiAuthentication(
 	this: IExecuteSingleFunctions,
+	itemIndex = 0,
 ): OpenAiAuthentication {
-	const authentication = this.getNodeParameter('authentication', 0, 'apiKey');
+	const authentication = this.getNodeParameter('authentication', itemIndex, 'apiKey');
 	return authentication === 'oAuth2' ? 'oAuth2' : 'apiKey';
 }
 
-export function getOpenAiCredentialType(this: IExecuteSingleFunctions): OpenAiCredentialType {
-	return getOpenAiAuthentication.call(this) === 'oAuth2' ? 'openAiOAuth2Api' : 'openAiApi';
+export function getOpenAiCredentialType(
+	this: IExecuteSingleFunctions,
+	itemIndex = 0,
+): OpenAiCredentialType {
+	return getOpenAiAuthentication.call(this, itemIndex) === 'oAuth2' ? 'openAiOAuth2Api' : 'openAiApi';
 }
 
 export async function setOpenAiAuthorizationHeader(
@@ -39,18 +43,19 @@ export async function setOpenAiAuthorizationHeader(
 	const credentialType = getOpenAiCredentialType.call(this);
 	const credentials = await this.getCredentials(credentialType);
 
-	let accessToken = '';
+	let accessToken: string | undefined;
 	if (credentialType === 'openAiApi') {
-		accessToken = getStringValue(credentials.apiKey) ?? '';
+		accessToken = getStringValue(credentials.apiKey);
 	} else {
 		const oauthTokenData = isDataObject(credentials.oauthTokenData)
 			? credentials.oauthTokenData
 			: undefined;
+		// n8n typically stores OAuth tokens on oauthTokenData.accessToken but we also
+		// support legacy snake_case and direct root-level mappings for compatibility.
 		accessToken =
 			getStringValue(oauthTokenData?.accessToken) ??
 			getStringValue(oauthTokenData?.access_token) ??
-			getStringValue(credentials.accessToken) ??
-			'';
+			getStringValue(credentials.accessToken);
 	}
 
 	if (!accessToken) {

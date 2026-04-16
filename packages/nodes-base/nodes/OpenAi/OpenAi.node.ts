@@ -37,6 +37,11 @@ export class OpenAi implements INodeType {
 			{
 				name: 'openAiApi',
 				required: true,
+				displayOptions: {
+					show: {
+						authentication: ['apiKey'],
+					},
+				},
 			},
 			{
 				name: 'openAiOAuth2Api',
