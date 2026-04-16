@@ -19,7 +19,7 @@ function getStringValue(value: unknown): string | undefined {
 	return typeof value === 'string' ? value : undefined;
 }
 
-export function getOpenAiAuthentication(
+function getOpenAiAuthentication(
 	this: IExecuteSingleFunctions,
 	itemIndex = 0,
 ): OpenAiAuthentication {

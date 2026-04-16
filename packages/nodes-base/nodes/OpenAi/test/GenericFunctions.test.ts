@@ -4,7 +4,10 @@ import { NodeOperationError } from 'n8n-workflow';
 import { getOpenAiCredentialType, setOpenAiAuthorizationHeader } from '../GenericFunctions';
 
 describe('OpenAI GenericFunctions', () => {
-	const createContext = (authentication: 'apiKey' | 'oAuth2', credentials: Record<string, unknown>) => {
+	const createMockContext = (
+		authentication: 'apiKey' | 'oAuth2',
+		credentials: Record<string, unknown>,
+	) => {
 		return {
 			getNodeParameter: jest.fn().mockReturnValue(authentication),
 			getCredentials: jest.fn().mockResolvedValue(credentials),
@@ -13,21 +16,23 @@ describe('OpenAI GenericFunctions', () => {
 	};
 
 	it('should resolve API key credential type', () => {
-		const context = createContext('apiKey', { apiKey: 'sk-test' });
+		const context = createMockContext('apiKey', { apiKey: 'sk-test' });
 		const credentialType = getOpenAiCredentialType.call(context as never);
 
 		expect(credentialType).toBe('openAiApi');
 	});
 
 	it('should resolve OAuth2 credential type', () => {
-		const context = createContext('oAuth2', { oauthTokenData: { accessToken: 'oauth-token' } });
+		const context = createMockContext('oAuth2', {
+			oauthTokenData: { accessToken: 'oauth-token' },
+		});
 		const credentialType = getOpenAiCredentialType.call(context as never);
 
 		expect(credentialType).toBe('openAiOAuth2Api');
 	});
 
 	it('should set Authorization header for API key auth', async () => {
-		const context = createContext('apiKey', { apiKey: 'sk-test' });
+		const context = createMockContext('apiKey', { apiKey: 'sk-test' });
 		const requestOptions: IHttpRequestOptions = {};
 
 		const result = await setOpenAiAuthorizationHeader.call(context as never, requestOptions);
@@ -37,7 +42,7 @@ describe('OpenAI GenericFunctions', () => {
 	});
 
 	it('should set Authorization header for OAuth2 auth', async () => {
-		const context = createContext('oAuth2', {
+		const context = createMockContext('oAuth2', {
 			oauthTokenData: { accessToken: 'oauth-token' },
 		});
 		const requestOptions: IHttpRequestOptions = {};
@@ -49,7 +54,7 @@ describe('OpenAI GenericFunctions', () => {
 	});
 
 	it('should throw when token is missing', async () => {
-		const context = createContext('oAuth2', {});
+		const context = createMockContext('oAuth2', {});
 		const requestOptions: IHttpRequestOptions = {};
 
 		await expect(
