@@ -55,5 +55,8 @@ describe('OpenAI GenericFunctions', () => {
 		await expect(
 			setOpenAiAuthorizationHeader.call(context as never, requestOptions),
 		).rejects.toBeInstanceOf(NodeOperationError);
+		await expect(
+			setOpenAiAuthorizationHeader.call(context as never, requestOptions),
+		).rejects.toThrow('No OpenAI access token found in credentials');
 	});
 });

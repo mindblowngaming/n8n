@@ -11,13 +11,27 @@ describe('OpenAiOAuth2Api Credential', () => {
 	});
 
 	it('should define hidden OAuth2 configuration fields', () => {
-		const propertiesByName = Object.fromEntries(credential.properties.map((property) => [property.name, property]));
+		const grantType = credential.properties.find((property) => property.name === 'grantType');
+		const authUrl = credential.properties.find((property) => property.name === 'authUrl');
+		const accessTokenUrl = credential.properties.find((property) => property.name === 'accessTokenUrl');
+		const scope = credential.properties.find((property) => property.name === 'scope');
+		const authQueryParameters = credential.properties.find(
+			(property) => property.name === 'authQueryParameters',
+		);
+		const authentication = credential.properties.find((property) => property.name === 'authentication');
 
-		expect(propertiesByName.grantType?.default).toBe('authorizationCode');
-		expect(propertiesByName.authUrl?.default).toBe('https://auth.openai.com/oauth/authorize');
-		expect(propertiesByName.accessTokenUrl?.default).toBe('https://auth.openai.com/oauth/token');
-		expect(propertiesByName.scope?.default).toBe('openid profile email');
-		expect(propertiesByName.authQueryParameters?.default).toBe('');
-		expect(propertiesByName.authentication?.default).toBe('body');
+		expect(grantType).toBeDefined();
+		expect(authUrl).toBeDefined();
+		expect(accessTokenUrl).toBeDefined();
+		expect(scope).toBeDefined();
+		expect(authQueryParameters).toBeDefined();
+		expect(authentication).toBeDefined();
+
+		expect(grantType?.default).toBe('authorizationCode');
+		expect(authUrl?.default).toBe('https://auth.openai.com/oauth/authorize');
+		expect(accessTokenUrl?.default).toBe('https://auth.openai.com/oauth/token');
+		expect(scope?.default).toBe('openid profile email');
+		expect(authQueryParameters?.default).toBe('');
+		expect(authentication?.default).toBe('body');
 	});
 });

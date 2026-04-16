@@ -50,8 +50,8 @@ export async function setOpenAiAuthorizationHeader(
 		const oauthTokenData = isDataObject(credentials.oauthTokenData)
 			? credentials.oauthTokenData
 			: undefined;
-		// n8n typically stores OAuth tokens on oauthTokenData.accessToken but we also
-		// support legacy snake_case and direct root-level mappings for compatibility.
+		// n8n stores OAuth token data on `oauthTokenData` and supports both camelCase
+		// and snake_case token field names used across credential migrations.
 		accessToken =
 			getStringValue(oauthTokenData?.accessToken) ??
 			getStringValue(oauthTokenData?.access_token) ??
